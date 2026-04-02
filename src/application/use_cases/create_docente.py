@@ -11,4 +11,5 @@ class CreateDocente:
         role = data.get("role", "DOCENTE").upper()
         data["rol"] = "ADMIN" if role == "ADMIN" else "DOCENTE"
         data["estado"] = True
+        data.pop("role", None)
         return self.repository.save(data)
