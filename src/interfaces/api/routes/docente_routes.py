@@ -1,6 +1,7 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Header, status
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from src.infrastructure.repositories.docente_repository_impl import DocenteRepositoryImpl
 from src.application.use_cases.get_docentes import GetDocentes
 from src.infrastructure.security.jwt import verify_token
@@ -8,22 +9,11 @@ from src.interfaces.api.schemas.docente_schema import DocenteResponse
 
 router = APIRouter()
 repo = DocenteRepositoryImpl()
+security = HTTPBearer()
 
 
-def get_current_user(authorization: str | None = Header(None, alias="Authorization")):
-    if authorization is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authorization header missing",
-        )
-
-    if not authorization.startswith("Bearer "):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authorization header must be Bearer token",
-        )
-
-    token = authorization.split(" ", 1)[1]
+def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
     payload = verify_token(token)
     if payload is None:
         raise HTTPException(
