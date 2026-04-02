@@ -37,7 +37,14 @@ def get_docentes(current_user: dict = Depends(get_current_user)):
             docente = repo.find_by_id(current_user.get("id"))
             if not docente:
                 raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Docente no encontrado")
-            docentes = [docente]
+            # Convertir a diccionario normalizado como get_all()
+            docentes = [{
+                "id": docente.id,
+                "nombre": docente.nombre,
+                "correo": docente.correo,
+                "rol": docente.rol or "DOCENTE",
+                "estado": docente.estado if docente.estado is not None else True
+            }]
 
         logger.info(f"Docentes encontrados: {len(docentes)}")
         return docentes

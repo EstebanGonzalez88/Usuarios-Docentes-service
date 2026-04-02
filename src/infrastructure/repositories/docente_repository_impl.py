@@ -23,9 +23,14 @@ class DocenteRepositoryImpl(DocenteRepository):
     def get_all(self):
         with SessionLocal() as db:
             docentes = db.query(DocenteModel).all()
+            # Serializar a dict mientras estamos en la sesión para mantener valores normalizados
+            result = []
             for docente in docentes:
-                if docente.rol is None:
-                    docente.rol = "DOCENTE"
-                if docente.estado is None:
-                    docente.estado = True
-            return docentes
+                result.append({
+                    "id": docente.id,
+                    "nombre": docente.nombre,
+                    "correo": docente.correo,
+                    "rol": docente.rol or "DOCENTE",
+                    "estado": docente.estado if docente.estado is not None else True
+                })
+            return result
