@@ -10,12 +10,19 @@ router = APIRouter()
 repo = DocenteRepositoryImpl()
 
 
-def get_current_user(authorization: str = Header(...)):
+def get_current_user(authorization: str | None = Header(None, alias="Authorization")):
+    if authorization is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authorization header missing",
+        )
+
     if not authorization.startswith("Bearer "):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authorization header must be Bearer token",
         )
+
     token = authorization.split(" ", 1)[1]
     payload = verify_token(token)
     if payload is None:
