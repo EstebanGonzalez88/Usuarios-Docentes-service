@@ -13,4 +13,4 @@ class LoginDocente:
         if not self.verify_service(password, docente.password):
             raise ValueError("Credenciales incorrectas")
 
-        return self.jwt_service({"id": docente.id})
+        return self.jwt_service({"id": docente.id, "rol": docente.rol})

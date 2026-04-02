@@ -8,6 +8,7 @@ class CreateDocente:
             raise ValueError("El correo ya está registrado")
 
         data["password"] = self.hash_service(data["password"])
-        data.setdefault("rol", "DOCENTE")
-        data.setdefault("estado", True)
+        role = data.get("role", "DOCENTE").upper()
+        data["rol"] = "ADMIN" if role == "ADMIN" else "DOCENTE"
+        data["estado"] = True
         return self.repository.save(data)

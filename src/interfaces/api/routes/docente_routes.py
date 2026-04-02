@@ -30,10 +30,19 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
 def get_docentes(current_user: dict = Depends(get_current_user)):
     try:
         logger.info(f"Usuario {current_user} solicitando lista de docentes")
-        use_case = GetDocentes(repo)
-        docentes = use_case.execute()
+
+        if current_user.get("rol") == "ADMIN":
+            docentes = repo.get_all()
+        else:
+            docente = repo.find_by_id(current_user.get("id"))
+            if not docente:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Docente no encontrado")
+            docentes = [docente]
+
         logger.info(f"Docentes encontrados: {len(docentes)}")
         return docentes
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error en get_docentes: {str(e)}", exc_info=True)
         raise HTTPException(

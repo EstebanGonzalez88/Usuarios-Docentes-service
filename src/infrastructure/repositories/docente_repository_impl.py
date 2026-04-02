@@ -16,6 +16,10 @@ class DocenteRepositoryImpl(DocenteRepository):
         with SessionLocal() as db:
             return db.query(DocenteModel).filter_by(correo=correo).first()
 
+    def find_by_id(self, docente_id):
+        with SessionLocal() as db:
+            return db.query(DocenteModel).filter_by(id=docente_id).first()
+
     def get_all(self):
         with SessionLocal() as db:
             docentes = db.query(DocenteModel).all()

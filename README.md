@@ -55,9 +55,31 @@ uvicorn main:app --reload --port 8001
 
 ## Endpoints principales
 
-- `POST /auth/register`: registrar docente
+- `POST /auth/register`: registrar docente (rol DOCENTE)
+- `POST /auth/register-admin`: registrar administrador (requiere header `X-Admin-Key` con clave desde `.env`)
 - `POST /auth/login`: obtener token JWT
-- `GET /docentes`: listar docentes (requiere header `Authorization: Bearer <token>`)
+- `GET /docentes`: listar docentes según rol
+  - ADMIN: todos los docentes
+  - DOCENTE: solo su registro
+
+## Administradores
+
+En `.env` agrega:
+
+```env
+ADMIN_CREATION_KEY=una_clave_super_secreta
+```
+
+Crear administrador:
+
+```bash
+curl -X POST http://127.0.0.1:8001/auth/register-admin \
+  -H "Content-Type: application/json" \
+  -H "X-Admin-Key: una_clave_super_secreta" \
+  -d '{"nombre":"Admin","correo":"admin@example.com","password":"1234"}'
+```
+
+Luego iniciar sesión y usar el JWT para `/docentes`.
 
 ## Notas
 
