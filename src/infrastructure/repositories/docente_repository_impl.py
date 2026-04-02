@@ -18,4 +18,10 @@ class DocenteRepositoryImpl(DocenteRepository):
 
     def get_all(self):
         with SessionLocal() as db:
-            return db.query(DocenteModel).all()
+            docentes = db.query(DocenteModel).all()
+            for docente in docentes:
+                if docente.rol is None:
+                    docente.rol = "DOCENTE"
+                if docente.estado is None:
+                    docente.estado = True
+            return docentes

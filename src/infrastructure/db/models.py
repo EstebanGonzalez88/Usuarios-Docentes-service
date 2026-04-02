@@ -10,5 +10,5 @@ class DocenteModel(Base):
     nombre = Column(String(100))
     correo = Column(String(100), unique=True)
     password = Column(String(255))
-    rol = Column(String(50), default="DOCENTE")
-    estado = Column(Boolean, default=True)
+    rol = Column(String(50), default="DOCENTE", nullable=False)
+    estado = Column(Boolean, default=True, nullable=False)
